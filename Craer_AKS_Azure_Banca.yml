@@ -1,0 +1,30 @@
+---
+- hosts: localhost
+  connection: local
+  vars:
+    nombre_aks: Banca_AKS_Cluster
+    locacion: eastus
+    resource_group: rs_gp_Banca
+    username: redhat
+    dns_prefix: dnsbanca
+  tasks:
+    - name: Crear un resource group
+      azure_rm_resourcegroup:
+        name: "{{ resource_group }}"
+        location: "{{ locacion }}" 
+    - name: Crear y gestionar un instacia de Azure Container Services (AKS)
+      azure_rm_aks:
+        name: "{{ nombre_aks }}"
+        location: "{{ locacion }}"
+        resource_group: "{{ resource_group }}"
+        dns_prefix: "{{ dns_prefix }}"
+        linux_profile:
+          admin_username: "{{ username }}"
+          ssh_key: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDA1rVbTe7JLAMmbjK2evu4XFf9UqKQlHHg9luvBFkEfYW9NeA3eysGO0E+bGVrTvhtHGvuLBQ9h2ixI8VEpcrGIkAntfT4fC0EnP/KjWBpwiWKHb6gmhRYhucywGM+h9/lOB4oRHLUlC3NCe40xIUqglE0Osqb7tP6dg3z6S1aTXpMKiWp1h78TbnenyDhxtdlER8Xka+sr+vkEzqHGArMaeozNPNt0MZIvL3+6OEwswPMi3Joy92+gJhwEPNOc3dm83S+Gs+8nVDhvMS9wGyc019FJBY0j2IxwVf2CQJK9HfqttgytT/cRee7jNShK5jI5uAA1ICtRiEPulR9WSul dgomez@Davids-MacBook-Pro.local
+        service_principal:
+          client_id: "{{ client_id }}"
+          client_secret: "{{ client_secret }}"
+        agent_pool_profiles:
+          - name: default
+            count: 2
+            vm_size: Standard_D2_v2

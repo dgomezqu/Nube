@@ -1,0 +1,9 @@
+- hosts: localhost
+  connection: local
+  tasks:
+    - name: Eliminar un API gateway
+      aws_api_gateway:
+        api_id: 'qb9deazs8f'
+        state: absent
+        region: us-east-2
+      register: apigateway_result

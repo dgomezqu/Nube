@@ -1,0 +1,10 @@
+---
+- hosts: localhost
+  connection: local
+  tasks:
+  - name: Eliminar el EKS cluster
+    aws_eks_cluster:      
+      region: us-east-2
+      name: mi_cluster_EKS_banca
+      role_arn: arn:aws:iam::020708902733:role/Role-EKS
+      state: absent

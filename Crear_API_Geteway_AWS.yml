@@ -1,0 +1,10 @@
+---
+- hosts: localhost
+  connection: local
+  tasks:
+    - name: Crear un API gateway
+      aws_api_gateway:
+        state: present
+        region: us-east-2
+        swagger_file: files/swagger.j2
+      register: apigateway_result

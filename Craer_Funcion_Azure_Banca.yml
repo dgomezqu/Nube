@@ -1,0 +1,26 @@
+---
+- hosts: localhost
+  connection: local
+  vars:
+    resource_group: rs_gp_Banca
+    locacion: eastus
+    name_storage: storagebanca
+    type_storage: Standard_RAGRS
+  tasks:
+    - name: Crear un resource group
+      azure_rm_resourcegroup:
+        name: "{{ resource_group }}"
+        location: "{{ locacion }}"   
+
+    - name: Creacion de storage account
+      azure_rm_storageaccount:
+        resource_group: "{{ resource_group }}"
+        name: "{{ name_storage }}"
+        type: "{{ type_storage }}"         
+        
+    - name: Creación de una function app
+      azure_rm_functionapp:
+          resource_group: "{{ resource_group }}"
+          storage_account: "{{ name_storage }}"
+          location: "{{ locacion }}"
+          name: functionsAppBanca

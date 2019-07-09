@@ -1,0 +1,10 @@
+---
+- hosts: localhost
+  connection: local
+  tasks:
+  - name: Eliminar una Lambda Function
+    lambda:
+      name: FuncionLambdaBanca
+      region: us-east-2
+      state: absent
+      role: "arn:aws:iam::020708902733:role/service-role/myFirtsLambdaApp-role-c8i5tsds"

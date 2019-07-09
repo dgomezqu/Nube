@@ -1,0 +1,58 @@
+---
+- hosts: localhost
+  connection: local
+  vars:
+    subnet_id: sb_nt_banca
+    resource_group: rs_gp_Banca
+    vnet_name: vt_nt_banca
+  tasks:
+    - name: Obtener información de la subnet
+      azure_rm_resource_facts:
+        api_version: '2018-08-01'
+        resource_group: "{{ resource_group }}"
+        provider: network
+        resource_type: virtualnetworks
+        resource_name: "{{ vnet_name }}"
+        subresource:
+          - type: subnets
+            name: "{{ subnet_id }}"
+      register: subnet  
+  
+    - name: Creación de una aplicación Gateway
+      azure_rm_appgateway:
+        resource_group: "{{ resource_group }}"
+        name: App_Gateway_Banca
+        sku:
+          name: standard_small
+          tier: standard
+          capacity: 2
+        gateway_ip_configurations:
+          - subnet:
+              id: "{{ subnet.response[0].id }}"
+            name: app_gateway_ip_config
+        frontend_ip_configurations:
+          - subnet:
+              id: "{{ subnet.response[0].id }}"
+            name: sample_gateway_frontend_ip_config
+        frontend_ports:
+          - port: 90
+            name: ag_frontend_port
+        backend_address_pools:
+          - backend_addresses:
+              - ip_address: 10.0.0.4
+            name: test_backend_address_pool
+        backend_http_settings_collection:
+          - port: 80
+            protocol: http
+            cookie_based_affinity: enabled
+            name: sample_appgateway_http_settings
+        http_listeners:
+          - frontend_ip_configuration: sample_gateway_frontend_ip_config
+            frontend_port: ag_frontend_port
+            name: sample_http_listener
+        request_routing_rules:
+          - rule_type: Basic
+            backend_address_pool: test_backend_address_pool
+            backend_http_settings: sample_appgateway_http_settings
+            http_listener: sample_http_listener
+            name: rule1

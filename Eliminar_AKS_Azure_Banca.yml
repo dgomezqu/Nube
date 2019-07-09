@@ -1,0 +1,16 @@
+---
+- hosts: localhost
+  connection: local
+  vars:
+    nombre_aks: Banca_AKS_Cluster
+    resource_group: rs_gp_Banca
+  tasks:
+    - name: Eliminar la instancia de Azure Container Services (AKS)
+      azure_rm_aks:
+        name: "{{ nombre_aks }}"
+        resource_group: "{{ resource_group }}"
+        state: absent
+    - name: Eliminar el resource group
+      azure_rm_resourcegroup:
+        name: "{{ resource_group }}"
+        state: absent
